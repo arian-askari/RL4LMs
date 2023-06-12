@@ -194,7 +194,8 @@ class OnPolicyTrainer(TrainerWarmStartMixin):
     def train_and_eval(self):
         # evaluate on val and test set before fine-tuning once
         iter_start = self._trainer_state["current_iter"]
-        self._evaluate_on_datapools(epoch=iter_start)
+        if self._train_eval_config["do_evaluation"] == 1: # arian
+            self._evaluate_on_datapools(epoch=iter_start)
 
         # train for given number of iters
         for epoch in range(iter_start, self._n_iters):
@@ -209,12 +210,15 @@ class OnPolicyTrainer(TrainerWarmStartMixin):
                 self.save_trainer_state(
                     self._tracker, self._alg.policy, self._trainer_state)
 
-            # evaluate on val set in the given intervals
-            if (epoch + 1) % self._train_eval_config["eval_every"] == 0:
-                self._evaluate_on_datapools(epoch=epoch, splits=["val"])
+            if self._train_eval_config["do_evaluation"] == 1: # arian
+                # evaluate on val set in the given intervals
+                if (epoch + 1) % self._train_eval_config["eval_every"] == 0:
+                    if self._train_eval_config["do_evaluation"] == 1: # arian
+                        self._evaluate_on_datapools(epoch=epoch, splits=["val"])
 
         # finally evaluate on val and test samples
-        self._evaluate_on_datapools(epoch=epoch)
+        if self._train_eval_config["do_final_evaluation"] == 1: # arian
+            self._evaluate_on_datapools(epoch=epoch)
 
         # save model here - we save only the language model
         if self._tracker is not None:
@@ -307,13 +311,15 @@ class SupervisedTrainer:
 
     def train_and_eval(self):
         # evaluate on val and test set before fine-tuning once
-        self._evaluate_on_datapools(epoch=0)
+        if self._train_eval_config["do_evaluation"] == 1: # arian
+            self._evaluate_on_datapools(epoch=0)
 
         # train using HF trainer
         self._trainer.train()
 
         # finally evaluate on val and test samples
-        self._evaluate_on_datapools(epoch=self._train_args.num_train_epochs)
+        if self._train_eval_config["do_evaluation"] == 1: # arian
+            self._evaluate_on_datapools(epoch=self._train_args.num_train_epochs)
 
         # save model here - we save only the language model
         if self._tracker is not None:
