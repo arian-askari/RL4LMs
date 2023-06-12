@@ -99,6 +99,12 @@ class DataPoolRegistry:
         "iwslt2017en_de": IWSLT2017EnDe,
         "crd3": CRD3DialogueGeneration,
         "daily_dialog": DailyDialog,
+        "hotpotqa_datapool": HotpotQADDataPool,
+        "fever_datapool": FeverDataPool,
+        "nq_datapool": NatualQuestionsDataPool,
+        "msmarco_dev": MsmarcoDevDataPool,
+        "trec_dl_19": TRECDL19DataPool,
+        "trec_dl_20": TRECDL20DataPool
     }
 
     @classmethod
@@ -133,6 +139,7 @@ class RewardFunctionRegistry:
         "chrf": chrF,
         "intent_accuracy": IntentAccuracy,
         "common_gen_preference_model": CommonGenPrefRM,
+        "highlighting_reward": HighlightingReward
     }
 
     @classmethod
@@ -169,6 +176,7 @@ class MetricRegistry:
         "ter": TERMetric,
         "chrf": chrFmetric,
         "intent_accuracy": IntentAccuracyDailyDialog,
+        "T5_score": MonoT5RelevanceScore
     }
 
     @classmethod
