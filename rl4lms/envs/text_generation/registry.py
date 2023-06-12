@@ -99,7 +99,7 @@ class DataPoolRegistry:
         "iwslt2017en_de": IWSLT2017EnDe,
         "crd3": CRD3DialogueGeneration,
         "daily_dialog": DailyDialog,
-        "hotpotqa_datapool": HotpotQADDataPool,
+        "hotpotqa_datapool": HotpotQADataPool,
         "fever_datapool": FeverDataPool,
         "nq_datapool": NatualQuestionsDataPool,
         "msmarco_dev": MsmarcoDevDataPool,
