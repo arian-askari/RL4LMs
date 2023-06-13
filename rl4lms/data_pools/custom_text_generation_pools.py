@@ -205,6 +205,45 @@ class CNNDailyMail(TextGenPool):
         pool_instance = cls(samples)
         return pool_instance
 
+class NatualQuestionsDataPool(TextGenPool):
+    @classmethod
+    def prepare(cls,
+                split: str,
+                prompt_suffix: str = "",
+                prompt_prefix: str = "",
+                truncate_article: int = None,
+                max_size: int = None):
+        
+        ft = Features({'text': Value('string'), 'label': Value('string')})
+        dataset = load_dataset("csv", data_files= "<textual_triples_train_path>", sep = "\t", features = ft)
+
+        dataset['train'] = dataset['train'].shuffle()
+        dataset = dataset.map(tokenize, remove_columns=('text', 'label'), batched=True, desc='Tokenizing')
+        #TODO: itterate on the above dataset and create "samples" object. + set the <textual_tiples_train_path>. Make sure that the highlighting exist in triples file!
+        dataset = load_dataset("cnn_dailymail", "3.0.0")
+        dataset_split = CommonGen.gen_split_name(split)
+        samples = []
+        for ix, item in tqdm(enumerate(dataset[dataset_split]),
+                             desc="Tokenizing dataset",
+                             total=len(dataset[dataset_split])):
+
+            if truncate_article is not None:
+                tokens = word_tokenize(item["article"])
+                tokens = tokens[:truncate_article]
+                item["article"] = " ".join(tokens)
+
+            sample = Sample(id=f"{split}_{ix}",
+                            prompt_or_input_text=prompt_prefix +
+                            item["article"] + prompt_suffix,
+                            references=[item["highlights"]]
+                            )
+            samples.append(sample)
+
+            if max_size is not None and ix == (max_size-1):
+                break
+
+        pool_instance = cls(samples)
+        return pool_instance
 
 class IMDB(TextGenPool):
     """
